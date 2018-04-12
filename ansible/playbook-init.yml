@@ -1,0 +1,7 @@
+- hosts: all
+  remote_user: root
+  become: true
+  gather_facts: no
+  tasks:
+    - name: Update APT repositories, install mandatory packages
+      raw:  '[ -x /usr/bin/python ] || (apt-get update && apt-get --no-install-recommends -yq install python)'

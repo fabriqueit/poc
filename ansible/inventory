@@ -1,0 +1,4 @@
+[server]
+54.54.54.55     # do-ubuntu01 
+54.54.54.55	    # do-ubuntu02 
+54.54.54.56	    # do-ubuntu03

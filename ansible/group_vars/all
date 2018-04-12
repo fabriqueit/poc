@@ -1,0 +1,21 @@
+---
+security_ssh_permit_root_login: "without-password"
+
+groups_to_create:
+  - name: administrators
+    gid: 999
+
+sudo_users:
+  - name: '%administrators'
+    nopasswd: yes
+
+users:
+  - username: ibeaute
+    name: Ivan Beaute
+    uid: 10103
+    groups: ['administrators']
+    profile: |
+      alias ll='ls -lah'
+    ssh_key:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwUCUnfHf0U+qPRW0AKODiYYbc+HVsYBglTJKXWfZc+82t8UWFbpUGVHU0uqF/SYUyhbA0Axx4iJEQ+SwX5/WjzeWMFWMopnG6n1ESqX3iQqy+Uc3OzJjDUQJFypVjugQeOResrDNVDfd3XFdOiaaMeE3ukMWyBl3Ik/sMeao9uEh2WBreBZEvbw3+IjU2bOIH6gLLYCUUQy+W5ClT8SVGnNqV3zLTk3/dZkytl7SkBiR/oQuNWVff6S1zFLAxQAdxxllB7AFBP1mjUb2TN+nQa6AmErJSptSatGanOHEdzAmxk+VOvfHlLmo+BBBvZqlTT4QQkWEPHWYtTlmt+kJjeN1YEherCQC1q3RLJEOodAKoYq6r5cozBM93XyIuYVSMFllnH9mx7VIca2rOr+9IhBkxjJAZEBXi0RVzXFIWn1vBbeNgCKzfHqUwsnowB2exnteqIFGQtYEYeoUIgpmlojsT98QgL2aLsd1LwNDM1FIcB396IVNBKRrHT2tFfNay53lHWqN2DXcuLALjzbQkxBIdnyHs0ztIa4HFBAvxY7ZUdwCUgeZiWw4YMiL5eoYOurLqiWD6lCDVBx+iZ+seYWZAO5yZrjgtkg7yYb32bHts6OVJwAdFZUCeAny1HSzVaXgEiaeFJVaEPq31V556jrx8gS6k8SezzBEok4wn7Q== ivan@fabrique-it.fr"
+
