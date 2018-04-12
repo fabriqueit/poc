@@ -1,0 +1,5 @@
+#cloud-config
+rancher:
+    console: ubuntu
+    docker:
+        engine: docker-17.03.2-ce

@@ -1,0 +1,95 @@
+# If you intened to deploy Kubernetes in an air-gapped envrionment,
+# please consult the documentation on how to configure custom RKE images.
+nodes:
+{% for public_ip in masters_ips.public_ip %}
+- address: {{ public_ip }}
+  internal_address: {{ masters_ips.private_ip[loop.index0] }}
+  role: [controlplane, etcd]
+  user: {{ user }}
+  docker_socket: /var/run/docker.sock
+  ssh_key: ""
+  ssh_key_path: ~/.ssh/id_rsa
+  labels: {}
+{% endfor %}
+{% for public_ip in workers_ips.public_ip %}
+- address:  {{ public_ip }}
+  internal_address: {{ workers_ips.private_ip[loop.index0] }}
+  role: [worker]
+  user: {{ user }}
+  docker_socket: /var/run/docker.sock
+  ssh_key: ""
+  ssh_key_path: ~/.ssh/id_rsa
+  labels: {}
+{% endfor %}
+services:
+  etcd:
+    image: rancher/etcd:v3.0.17
+    extra_args: {}
+  kube-api:
+    image: rancher/k8s:v1.8.7-rancher1-1
+    extra_args:
+      v: 4
+    service_cluster_ip_range: 10.233.0.0/18
+    pod_security_policy: false
+  kube-controller:
+    image: rancher/k8s:v1.8.7-rancher1-1
+    extra_args: {}
+    cluster_cidr: 10.233.64.0/18
+    service_cluster_ip_range: 10.233.0.0/18
+  scheduler:
+    image: rancher/k8s:v1.8.7-rancher1-1
+    extra_args: {}
+  kubelet:
+    image: rancher/k8s:v1.8.7-rancher1-1
+    extra_args: {}
+    cluster_domain: cluster.local
+    infra_container_image: rancher/pause-amd64:3.0
+    cluster_dns_server: 10.233.0.3
+    fail_swap_on: false
+  kubeproxy:
+    image: rancher/k8s:v1.8.7-rancher1-1
+    extra_args: {}
+network:
+  plugin: weave
+  options: {}
+authentication:
+  strategy: x509
+  options: {}
+system_images:
+  etcd: rancher/etcd:v3.0.17
+  kubernetes: rancher/k8s:v1.8.7-rancher1-1
+  alpine: alpine:latest
+  nginx_proxy: rancher/rke-nginx-proxy:v0.1.1
+  cert_downloader: rancher/rke-cert-deployer:v0.1.1
+  kubernetes_services_sidecar: rancher/rke-service-sidekick:v0.1.0
+  kubedns: rancher/k8s-dns-kube-dns-amd64:1.14.5
+  dnsmasq: rancher/k8s-dns-dnsmasq-nanny-amd64:1.14.5
+  kubedns_sidecar: rancher/k8s-dns-sidecar-amd64:1.14.5
+  kubedns_autoscaler: rancher/cluster-proportional-autoscaler-amd64:1.0.0
+ssh_key_path: ~/.ssh/id_rsa
+authorization:
+  mode: rbac
+  options: {}
+ignore_docker_version: false
+kubernetes_version: ""
+private_registries: []
+ingress:
+  type: nginx
+  provider: ""
+  options: {}
+  node_selector: {} 
+
+# all addon manifests MUST specify a namespace
+addons: |-
+    ---
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: my-nginx
+      namespace: default
+    spec:
+      containers:
+      - name: my-nginx
+        image: nginx
+        ports:
+        - containerPort: 80

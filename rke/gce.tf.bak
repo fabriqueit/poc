@@ -1,0 +1,27 @@
+provider "google" {
+  version     = "0.1.3"
+  credentials = "${file("account.json")}"
+  project = "testkub1-182009"
+  region = "europe-west1"
+}
+
+module "gce-dc" {
+  source = "./providers/gce"
+  datacenter = "gce-dc"
+  cluster_type = "n1-standard-1"
+  masters_size = "3"
+  workers_size = "3"
+  network_ipv4 = "10.0.0.0/16"
+  name = "rke-cluster"
+  short_name = "rke"
+  region = "europe-west1"
+  zone = "europe-west1-b"
+}
+
+output "masters_ips" {
+    value = "{\"private_ip\": [\"${join("\",\"", module.gce-dc.masters_private_ips)}\"], \"public_ip\": [\"${join("\",\"", module.gce-dc.masters_public_ips)}\"]}"
+}
+
+output "workers_ips" {
+    value = "{\"private_ip\": [\"${join("\",\"", module.gce-dc.workers_private_ips)}\"], \"public_ip\": [\"${join("\",\"", module.gce-dc.workers_public_ips)}\"]}"
+}
